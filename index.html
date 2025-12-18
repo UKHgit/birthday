@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday Chutii 💕</title>
+    <meta name="description" content="A special birthday celebration for Sanjana">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Poppins:wght@300;400;500;600;700&family=Dancing+Script:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- Start Screen Overlay -->
+    <div id="startScreen" class="start-screen">
+        <!-- Stars Background for Welcome -->
+        <div id="welcomeStars" class="welcome-stars"></div>
+
+        <!-- Roses Background for Welcome -->
+        <div id="welcomeRoses" class="welcome-roses"></div>
+
+        <!-- Heart Animation Container - TOP -->
+        <div id="heartAnimationContainer" class="heart-animation-container">
+            <!-- S💕C in center -->
+            <div class="center-logo">S💕C</div>
+        </div>
+
+        <!-- Welcome Text and Button - BELOW HEART -->
+        <div class="welcome-content">
+            <h1 class="start-title">A Special Birthday Surprise</h1>
+            <p class="start-subtitle">From Sudu to the love of his life</p>
+            <button id="startBtn" class="start-btn">
+                <span>🎉 Start the Celebration 🎉</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Audio Element -->
+    <audio id="bgMusic" loop>
+        <source src="hpb.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Main Content -->
+    <div id="mainContent" class="hidden">
+        <!-- Stars Background -->
+        <div id="starsLayer" class="stars-layer"></div>
+
+        <!-- Falling Roses -->
+        <div id="fallingRoses" class="falling-roses"></div>
+
+        <!-- Floating Hearts -->
+        <div id="floatingHearts" class="floating-hearts"></div>
+
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-sparkles"></div>
+            <div class="hero-content">
+                <div class="date-container">
+                    <div class="date-badge">🎂 December 22nd 🎂</div>
+                    <div class="celebration-text">Turning 19! ✨</div>
+                </div>
+                <h1 class="hero-title">
+                    <span class="line sparkle-text">Happy Birthday</span>
+                    <span class="line highlight rainbow-text">Chutii 💕</span>
+                </h1>
+                <p class="hero-subtitle">With endless love from your Sudu 💖</p>
+                <div class="hero-hearts">
+                    <span>💕</span><span>💖</span><span>💗</span><span>💝</span><span>💕</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Photo Gallery Section -->
+        <section class="photo-gallery">
+            <div class="container">
+                <h2 class="section-title rainbow-text">Our Beautiful Moments 📸</h2>
+                <p class="section-subtitle">Captured forever in our hearts</p>
+
+                <div class="gallery-grid">
+                    <div class="photo-card special-photo">
+                        <div class="photo-wrapper">
+                            <img src="1.jpg" alt="Our hands together - Our first moment">
+                            <div class="photo-overlay">
+                                <div class="photo-icon">💑</div>
+                                <p class="photo-caption">The moment we held hands 💕</p>
+                                <p class="photo-description">Our first beautiful memory together</p>
+                            </div>
+                        </div>
+                        <div class="photo-frame-glow"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Love Messages Section -->
+        <section class="love-messages">
+            <div class="container">
+                <h2 class="section-title rainbow-text">Messages from My Heart 💌</h2>
+                <p class="section-subtitle">What you mean to me, Chutii</p>
+
+                <div class="messages-grid">
+                    <div class="message-card card-pink">
+                        <div class="message-icon">💖</div>
+                        <h3>My Everything</h3>
+                        <p>Chutii, you've brought so much joy and love into my life. Every moment with you is a
+                            treasure, and I'm so grateful to celebrate this special day with you.</p>
+                    </div>
+
+                    <div class="message-card card-purple">
+                        <div class="message-icon">✨</div>
+                        <h3>First of Many</h3>
+                        <p>This is our first birthday celebration together, but I promise it won't be the last. I want
+                            to be there for every birthday, every milestone, every moment.</p>
+                    </div>
+
+                    <div class="message-card card-orange">
+                        <div class="message-icon">🌟</div>
+                        <h3>You Make Me Better</h3>
+                        <p>Your smile lights up my world, your laugh is my favorite sound, and your happiness is my
+                            greatest wish. Thank you for being amazing.</p>
+                    </div>
+
+                    <div class="message-card card-gold">
+                        <div class="message-icon">💕</div>
+                        <h3>Forever Yours</h3>
+                        <p>From Sudu to Chutii - I love you more than words can express. Here's to us, to our memories,
+                            and to all the beautiful moments yet to come.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Romantic Quotes Section -->
+        <section class="romantic-quotes">
+            <div class="container">
+                <h2 class="section-title rainbow-text">Love Notes 💝</h2>
+                <div class="quotes-carousel">
+                    <div class="quote-card">
+                        <div class="quote-icon">🌹</div>
+                        <p class="quote-text">"Every love story is beautiful, but ours is my favorite."</p>
+                        <div class="quote-author">~ Sudu</div>
+                    </div>
+                    <div class="quote-card">
+                        <div class="quote-icon">💫</div>
+                        <p class="quote-text">"You are my today and all of my tomorrows."</p>
+                        <div class="quote-author">~ Forever</div>
+                    </div>
+                    <div class="quote-card">
+                        <div class="quote-icon">🌺</div>
+                        <p class="quote-text">"In you, I've found the love of my life and my closest friend."</p>
+                        <div class="quote-author">~ My Heart</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Life Advice Section -->
+        <section class="life-advice">
+            <div class="container">
+                <h2 class="section-title rainbow-text">Wishes for Your Journey 🌟</h2>
+                <p class="section-subtitle">Beautiful thoughts for your special year ahead</p>
+
+                <div class="advice-grid">
+                    <div class="advice-card card-gradient-1">
+                        <div class="advice-icon">🌈</div>
+                        <div class="advice-quote">
+                            <p>Always believe in yourself, Chutii. You have the strength to achieve anything you dream
+                                of.</p>
+                        </div>
+                        <div class="advice-tag">Believe & Achieve</div>
+                    </div>
+
+                    <div class="advice-card card-gradient-2">
+                        <div class="advice-icon">💎</div>
+                        <div class="advice-quote">
+                            <p>Never forget how special you are. Your kindness makes the world a brighter place.</p>
+                        </div>
+                        <div class="advice-tag">You Are Special</div>
+                    </div>
+
+                    <div class="advice-card card-gradient-3">
+                        <div class="advice-icon">🦋</div>
+                        <div class="advice-quote">
+                            <p>Chase your dreams fearlessly, but remember to enjoy every moment along the way.</p>
+                        </div>
+                        <div class="advice-tag">Dream & Live</div>
+                    </div>
+
+                    <div class="advice-card card-gradient-4">
+                        <div class="advice-icon">☀️</div>
+                        <div class="advice-quote">
+                            <p>In every challenge, find an opportunity. In every setback, find a lesson.</p>
+                        </div>
+                        <div class="advice-tag">Stay Positive</div>
+                    </div>
+
+                    <div class="advice-card card-gradient-5">
+                        <div class="advice-icon">🌸</div>
+                        <div class="advice-quote">
+                            <p>Love deeply, laugh often, and live fully. Never stop being wonderful.</p>
+                        </div>
+                        <div class="advice-tag">Love & Live</div>
+                    </div>
+
+                    <div class="advice-card card-gradient-6 highlight-card">
+                        <div class="advice-icon">💝</div>
+                        <div class="advice-quote">
+                            <p>Remember that you are loved beyond measure. Today and always, you have someone who will
+                                love you unconditionally. Happy Birthday! 💕</p>
+                        </div>
+                        <div class="advice-tag">Forever Loved</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Birthday Wishes Section -->
+        <section class="birthday-wishes">
+            <div class="container">
+                <h2 class="section-title rainbow-text">My Birthday Wishes for You 🎁</h2>
+                <div class="wishes-grid">
+                    <div class="wish-card">
+                        <div class="wish-number">1</div>
+                        <div class="wish-text">May your year be filled with laughter, joy, and endless beautiful
+                            surprises 🎉</div>
+                    </div>
+                    <div class="wish-card">
+                        <div class="wish-number">2</div>
+                        <div class="wish-text">May all your dreams come true and your heart always be full of happiness
+                            💫</div>
+                    </div>
+                    <div class="wish-card">
+                        <div class="wish-number">3</div>
+                        <div class="wish-text">May you always know how deeply you are loved and cherished 💖</div>
+                    </div>
+                    <div class="wish-card">
+                        <div class="wish-number">4</div>
+                        <div class="wish-text">May we create countless more beautiful memories together 🌹</div>
+                    </div>
+                    <div class="wish-card">
+                        <div class="wish-number">5</div>
+                        <div class="wish-text">May your smile never fade and your spirit always shine bright ✨</div>
+                    </div>
+                    <div class="wish-card">
+                        <div class="wish-number">6</div>
+                        <div class="wish-text">May our love grow stronger with each passing day 💕</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Final Message Section -->
+        <section class="final-message">
+            <div class="fireworks-container"></div>
+            <div class="container">
+                <div class="final-content">
+                    <div class="final-icon-burst">
+                        <span>🎂</span><span>🎉</span><span>🎊</span><span>🎁</span><span>🎈</span>
+                    </div>
+                    <h2 class="final-title rainbow-text">Happy Birthday, Chutii! 🎂✨</h2>
+                    <div class="final-message-box">
+                        <p class="final-text">May this year bring you endless joy, countless blessings, and all the
+                            happiness your heart can hold.</p>
+                        <p class="final-text">You are the most incredible person I know, and I feel so lucky to be part
+                            of your life.</p>
+                    </div>
+                    <p class="final-signature">With all my love,<br><span class="signature-name">Sudu 💕</span></p>
+                    <div class="heart-burst">
+                        <span>💕</span><span>💖</span><span>💗</span><span>💝</span><span>💕</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
