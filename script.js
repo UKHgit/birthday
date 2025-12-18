@@ -230,65 +230,45 @@ function addTouchHeartBurst() {
     const hearts = ['💕', '💖', '💗', '💝', '❤️', '💓', '💞', '💘', '💟', '❣️'];
 
     function createHeartBurst(x, y) {
-        const heartCount = perfSettings.heartBurstCount + Math.floor(Math.random() * 5);
+        // Optimized: Reduced overhead by using CSS animations instead of JS loop
+        const count = isMobile ? 5 : 8;
 
-        for (let i = 0; i < heartCount; i++) {
+        for (let i = 0; i < count; i++) {
             const heart = document.createElement('div');
+            heart.classList.add('burst-heart');
             heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
-            heart.style.position = 'fixed';
+
+            // Set start position
             heart.style.left = x + 'px';
             heart.style.top = y + 'px';
-            heart.style.fontSize = (Math.random() * 20 + 15) + 'px';
-            heart.style.pointerEvents = 'none';
-            heart.style.zIndex = '10000';
-            heart.style.filter = 'drop-shadow(0 0 10px rgba(255, 105, 180, 0.8))';
-            heart.style.transition = 'none';
+            heart.style.fontSize = (Math.random() * 15 + 15) + 'px';
+
+            // Calculate random spread
+            const angle = (Math.PI * 2 * i) / count + (Math.random() * 0.5 - 0.25);
+            const distance = 60 + Math.random() * 60;
+
+            // Gravity effect approximation
+            const tx = Math.cos(angle) * distance;
+            const ty = Math.sin(angle) * distance + 40;
+
+            heart.style.setProperty('--tx', `${tx}px`);
+            heart.style.setProperty('--ty', `${ty}px`);
+            heart.style.setProperty('--rot', `${Math.random() * 360}deg`);
 
             document.body.appendChild(heart);
 
-            // Random direction for burst
-            const angle = (Math.PI * 2 * i) / heartCount + (Math.random() * 0.5 - 0.25);
-            const velocity = 80 + Math.random() * 60;
-            const vx = Math.cos(angle) * velocity;
-            const vy = Math.sin(angle) * velocity;
-
-            let posX = 0;
-            let posY = 0;
-            let opacity = 1;
-            let scale = 1;
-            let rotation = 0;
-
-            function animateHeart() {
-                posX += vx * 0.016;
-                posY += vy * 0.016 + 1; // Add gravity
-                opacity -= 0.015;
-                scale += 0.01;
-                rotation += 5;
-
-                heart.style.transform = `translate(${posX}px, ${posY}px) scale(${scale}) rotate(${rotation}deg)`;
-                heart.style.opacity = opacity;
-
-                if (opacity > 0) {
-                    requestAnimationFrame(animateHeart);
-                } else {
-                    heart.remove();
-                }
-            }
-
-            requestAnimationFrame(animateHeart);
+            // Auto cleanup
+            setTimeout(() => {
+                heart.remove();
+            }, 2000); // Matches CSS animation duration
         }
     }
 
-    // Add click event for desktop
-    document.addEventListener('click', function (e) {
+    // Use pointerdown for instant reaction on both mobile/desktop and to avoid duplicates
+    document.addEventListener('pointerdown', function (e) {
+        // Prevent firing on simple scrolls if needed, but for 'touch somewhere' this is usually what is wanted.
         createHeartBurst(e.clientX, e.clientY);
-    });
-
-    // Add touch event for mobile
-    document.addEventListener('touchstart', function (e) {
-        const touch = e.touches[0];
-        createHeartBurst(touch.clientX, touch.clientY);
-    });
+    }, { passive: true });
 }
 
 // ==========================================
