@@ -289,8 +289,9 @@ function initializeMainContent() {
 // Continues playing 1.mp3 as user scrolls.
 // When scrolling to "Forever Yours" card, switch to 2.mp3.
 // Keep playing 2.mp3 in loop (never go back to 1.mp3).
+// Uses scroll events instead of IntersectionObserver for iOS compatibility
 // ==========================================
-let audio2Unlocked = false; // Track if audio2 has been unlocked for iOS
+let audio2Started = false; // Track globally if 2.mp3 has started
 
 function initScrollAudio() {
     const foreverYoursCard = document.getElementById('foreverYoursCard');
@@ -302,83 +303,90 @@ function initScrollAudio() {
         return;
     }
 
-    let audio2Started = false; // Track if 2.mp3 has started playing
-
-    // Ensure 2.mp3 loops (backup in case HTML attribute not working)
+    // Ensure 2.mp3 loops
     audio2.loop = true;
 
-    // Function to switch to audio 2
+    // Function to switch from audio1 to audio2
     function switchToAudio2() {
         if (audio2Started) return;
         audio2Started = true;
-        console.log('Forever Yours card reached - switching to 2.mp3');
 
-        // Fade out and stop 1.mp3
-        const fadeOut = setInterval(() => {
-            if (audio1.volume > 0.1) {
-                audio1.volume -= 0.1;
-            } else {
-                audio1.pause();
-                audio1.currentTime = 0;
-                audio1.volume = 1;
-                clearInterval(fadeOut);
-            }
-        }, 50);
+        console.log('Switching to 2.mp3 now!');
 
-        // Start 2.mp3 immediately
+        // Stop 1.mp3 immediately (no fade for reliability)
+        audio1.pause();
+        audio1.currentTime = 0;
+
+        // Start 2.mp3
         audio2.currentTime = 0;
         audio2.volume = 1;
+        audio2.muted = false;
 
-        // Try to play with iOS fallback
+        // Try to play
         const playPromise = audio2.play();
-
         if (playPromise !== undefined) {
-            playPromise
-                .then(() => {
-                    console.log('2.mp3 is now playing');
-                    audio2Unlocked = true;
-                })
-                .catch(error => {
-                    console.error('Error playing 2.mp3:', error);
-                    // iOS fallback: show message and try on next touch
-                    setupIOSFallback(audio2);
-                });
+            playPromise.then(() => {
+                console.log('2.mp3 is now playing!');
+            }).catch(error => {
+                console.error('2.mp3 play failed, setting up touch handler:', error);
+                // iOS requires user interaction - set up touch handler
+                setupTouchToPlay(audio2);
+            });
         }
     }
 
-    // Observer for "Forever Yours" card
-    const foreverObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting && !audio2Started) {
-                switchToAudio2();
-            }
-        });
-    }, { threshold: 0.15 }); // Trigger when 15% of card is visible
+    // Check if Forever Yours card is in viewport
+    function isCardInView() {
+        const rect = foreverYoursCard.getBoundingClientRect();
+        const windowHeight = window.innerHeight || document.documentElement.clientHeight;
+        // Trigger when top of card is in middle of screen or above
+        return rect.top <= windowHeight * 0.7;
+    }
 
-    foreverObserver.observe(foreverYoursCard);
+    // Scroll handler - check on every scroll
+    function onScroll() {
+        if (!audio2Started && isCardInView()) {
+            switchToAudio2();
+            // Remove scroll listener once triggered
+            window.removeEventListener('scroll', onScroll);
+            document.removeEventListener('scroll', onScroll);
+        }
+    }
+
+    // Add scroll listeners (both window and document for iOS)
+    window.addEventListener('scroll', onScroll, { passive: true });
+    document.addEventListener('scroll', onScroll, { passive: true });
+
+    // Also check on touch move for iOS
+    document.addEventListener('touchmove', onScroll, { passive: true });
+
+    // Initial check in case already scrolled
+    setTimeout(() => {
+        if (!audio2Started && isCardInView()) {
+            switchToAudio2();
+        }
+    }, 500);
 }
 
-// iOS Safari audio fallback - tries to play on any user interaction
-function setupIOSFallback(audioElement) {
-    const tryPlay = () => {
-        audioElement.play()
-            .then(() => {
-                console.log('Audio resumed via iOS fallback');
-                audio2Unlocked = true;
-                // Remove all listeners once successful
-                document.removeEventListener('touchstart', tryPlay);
-                document.removeEventListener('touchend', tryPlay);
-                document.removeEventListener('click', tryPlay);
-            })
-            .catch(e => {
-                console.log('Still waiting for user interaction:', e.message);
-            });
+// iOS touch-to-play fallback
+function setupTouchToPlay(audioElement) {
+    const playOnTouch = () => {
+        audioElement.play().then(() => {
+            console.log('Audio playing after touch!');
+            document.removeEventListener('touchstart', playOnTouch);
+            document.removeEventListener('touchend', playOnTouch);
+            document.removeEventListener('click', playOnTouch);
+        }).catch(e => {
+            console.log('Still need interaction:', e.message);
+        });
     };
 
-    // Add multiple event listeners for iOS
-    document.addEventListener('touchstart', tryPlay, { passive: true });
-    document.addEventListener('touchend', tryPlay, { passive: true });
-    document.addEventListener('click', tryPlay, { passive: true });
+    document.addEventListener('touchstart', playOnTouch, { passive: true });
+    document.addEventListener('touchend', playOnTouch, { passive: true });
+    document.addEventListener('click', playOnTouch, { passive: true });
+
+    // Show visual hint to user (optional)
+    console.log('Tap screen to start audio');
 }
 
 
