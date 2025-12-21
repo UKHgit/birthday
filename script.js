@@ -185,11 +185,20 @@ function initializeStartScreen() {
     const startScreen = document.getElementById('startScreen');
     const mainContent = document.getElementById('mainContent');
     const bgMusic = document.getElementById('bgMusic');
+    const audio1 = document.getElementById('scrollAudio1');
 
     if (!startBtn) return;
 
     startBtn.addEventListener('click', function () {
-        // Play music
+        // Play 1.mp3 immediately
+        if (audio1) {
+            audio1.currentTime = 0;
+            audio1.play().catch(err => {
+                console.log('Auto-play prevented:', err);
+            });
+        }
+
+        // Play background music
         bgMusic.play().catch(err => {
             console.log('Auto-play prevented:', err);
         });
@@ -219,9 +228,59 @@ function initializeMainContent() {
     createFireworks();
     animateCounters();
     initScrollAnimations();
+    initScrollAudio();
     addInteractiveEffects();
     addTouchHeartBurst();
 }
+
+// ==========================================
+// Scroll-triggered audio playback
+// Plays `scrollAudio1` on button click.
+// Continues playing 1.mp3 as user scrolls.
+// When scrolling to "Forever" quote, switch to 2.mp3.
+// Keep playing 2.mp3 (never go back to 1.mp3).
+// ==========================================
+function initScrollAudio() {
+    const foreverEl = document.getElementById('foreverQuote');
+    const audio1 = document.getElementById('scrollAudio1');
+    const audio2 = document.getElementById('scrollAudio2');
+    if (!foreverEl || !audio1 || !audio2) return;
+
+    let audio2Started = false; // Track if 2.mp3 has started playing
+
+    // Observer for "Forever" quote card
+    const foreverObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting && !audio2Started) {
+                // Forever quote is now visible
+                audio2Started = true;
+                console.log('Forever quote reached - switching to 2.mp3');
+                
+                // Stop 1.mp3
+                audio1.pause();
+                audio1.currentTime = 0;
+                
+                // Start 2.mp3 from beginning
+                audio2.currentTime = 0;
+                audio2.muted = false;
+                const playPromise = audio2.play();
+                
+                if (playPromise !== undefined) {
+                    playPromise
+                        .then(() => {
+                            console.log('2.mp3 is now playing');
+                        })
+                        .catch(error => {
+                            console.error('Error playing 2.mp3:', error);
+                        });
+                }
+            }
+        });
+    }, { threshold: 0.15 });
+    foreverObserver.observe(foreverEl);
+}
+
+
 
 // ==========================================
 // Touch/Click Heart Burst Effect

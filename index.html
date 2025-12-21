@@ -43,6 +43,13 @@
     <audio id="bgMusic" loop>
         <source src="hpb.mp3" type="audio/mpeg">
     </audio>
+    <!-- Scroll-triggered audio files -->
+    <audio id="scrollAudio1" preload="auto" style="display: none;">
+        <source src="1.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="scrollAudio2" preload="auto" style="display: none;">
+        <source src="2.mp3" type="audio/mpeg">
+    </audio>
 
     <!-- Main Content -->
     <div id="mainContent" class="hidden">
@@ -103,7 +110,7 @@
                 <p class="section-subtitle">ඔයාව මට කවුද කියල ඇහුවොත් මුලින්ම 🙃♥️🫶🏻</p>
 
                 <div class="messages-grid">
-                    <div class="message-card card-pink">
+                    <div id="myEverything" class="message-card card-pink">
                         <div class="message-icon">💖</div>
                         <h3>My Everything</h3>
                         <p>මේ උඩ පාට පාටට පේනව නේද🫢හිහි... කලින් කලු සුදු තිබ්බ මගෙ ජීවිතයත් ඔයා ආවට පස්සෙ ලස්සන උනෙ මෙන්න මෙ වගේ 🥺🫂 මං ආසම දවස් වලින් එකක් අද දවස, මොකද ඔයා මේ ලෝකෙට ආවෙ අද වගේ දවසකනෙ😚</p>
@@ -141,7 +148,7 @@
                         <p class="quote-text">"Every love story is beautiful, but ours is my favorite."</p>
                         <div class="quote-author">~ Sudu</div>
                     </div>
-                    <div class="quote-card">
+                    <div id="foreverQuote" class="quote-card">
                         <div class="quote-icon">💫</div>
                         <p class="quote-text">"You are my today and all of my tomorrows."</p>
                         <div class="quote-author">~ Forever</div>
