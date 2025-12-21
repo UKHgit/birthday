@@ -186,22 +186,72 @@ function initializeStartScreen() {
     const mainContent = document.getElementById('mainContent');
     const bgMusic = document.getElementById('bgMusic');
     const audio1 = document.getElementById('scrollAudio1');
+    const audio2 = document.getElementById('scrollAudio2');
 
     if (!startBtn) return;
 
     startBtn.addEventListener('click', function () {
+        // iOS Audio Unlock: Load both audio files first
+        if (audio1) audio1.load();
+        if (audio2) audio2.load();
+
         // Play 1.mp3 immediately
         if (audio1) {
             audio1.currentTime = 0;
-            audio1.play().catch(err => {
-                console.log('Auto-play prevented:', err);
-            });
+            audio1.volume = 1;
+            audio1.muted = false;
+
+            const playAudio1 = audio1.play();
+            if (playAudio1 !== undefined) {
+                playAudio1
+                    .then(() => {
+                        console.log('Audio 1 playing successfully');
+                    })
+                    .catch(err => {
+                        console.log('Audio 1 play prevented:', err);
+                        // Fallback: try again
+                        setTimeout(() => {
+                            audio1.play().catch(e => console.log('Audio 1 retry failed:', e));
+                        }, 100);
+                    });
+            }
         }
 
-        // Play background music
-        bgMusic.play().catch(err => {
-            console.log('Auto-play prevented:', err);
-        });
+        // Prime 2.mp3 for iOS - CRITICAL for scroll-triggered playback
+        // iOS Safari requires audio to be "unlocked" during a user gesture
+        if (audio2) {
+            // Method 1: Play muted briefly then pause
+            audio2.muted = true;
+            audio2.volume = 0;
+
+            const primePromise = audio2.play();
+            if (primePromise !== undefined) {
+                primePromise
+                    .then(() => {
+                        // Successfully started - now pause and reset
+                        setTimeout(() => {
+                            audio2.pause();
+                            audio2.currentTime = 0;
+                            audio2.muted = false;
+                            audio2.volume = 1;
+                            console.log('Audio 2 primed successfully for iOS');
+                        }, 50);
+                    })
+                    .catch(err => {
+                        console.log('Audio 2 priming method 1 failed:', err);
+                        // Method 2: Just load and hope for the best
+                        audio2.muted = false;
+                        audio2.volume = 1;
+                    });
+            }
+        }
+
+        // Play background music (optional)
+        if (bgMusic) {
+            bgMusic.play().catch(err => {
+                console.log('Background music prevented:', err);
+            });
+        }
 
         // Fade out start screen
         startScreen.style.transition = 'opacity 1s ease';
@@ -237,47 +287,98 @@ function initializeMainContent() {
 // Scroll-triggered audio playback
 // Plays `scrollAudio1` on button click.
 // Continues playing 1.mp3 as user scrolls.
-// When scrolling to "Forever" quote, switch to 2.mp3.
-// Keep playing 2.mp3 (never go back to 1.mp3).
+// When scrolling to "Forever Yours" card, switch to 2.mp3.
+// Keep playing 2.mp3 in loop (never go back to 1.mp3).
 // ==========================================
+let audio2Unlocked = false; // Track if audio2 has been unlocked for iOS
+
 function initScrollAudio() {
-    const foreverEl = document.getElementById('foreverQuote');
+    const foreverYoursCard = document.getElementById('foreverYoursCard');
     const audio1 = document.getElementById('scrollAudio1');
     const audio2 = document.getElementById('scrollAudio2');
-    if (!foreverEl || !audio1 || !audio2) return;
+
+    if (!foreverYoursCard || !audio1 || !audio2) {
+        console.log('Audio elements not found');
+        return;
+    }
 
     let audio2Started = false; // Track if 2.mp3 has started playing
 
-    // Observer for "Forever" quote card
+    // Ensure 2.mp3 loops (backup in case HTML attribute not working)
+    audio2.loop = true;
+
+    // Function to switch to audio 2
+    function switchToAudio2() {
+        if (audio2Started) return;
+        audio2Started = true;
+        console.log('Forever Yours card reached - switching to 2.mp3');
+
+        // Fade out and stop 1.mp3
+        const fadeOut = setInterval(() => {
+            if (audio1.volume > 0.1) {
+                audio1.volume -= 0.1;
+            } else {
+                audio1.pause();
+                audio1.currentTime = 0;
+                audio1.volume = 1;
+                clearInterval(fadeOut);
+            }
+        }, 50);
+
+        // Start 2.mp3 immediately
+        audio2.currentTime = 0;
+        audio2.volume = 1;
+
+        // Try to play with iOS fallback
+        const playPromise = audio2.play();
+
+        if (playPromise !== undefined) {
+            playPromise
+                .then(() => {
+                    console.log('2.mp3 is now playing');
+                    audio2Unlocked = true;
+                })
+                .catch(error => {
+                    console.error('Error playing 2.mp3:', error);
+                    // iOS fallback: show message and try on next touch
+                    setupIOSFallback(audio2);
+                });
+        }
+    }
+
+    // Observer for "Forever Yours" card
     const foreverObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting && !audio2Started) {
-                // Forever quote is now visible
-                audio2Started = true;
-                console.log('Forever quote reached - switching to 2.mp3');
-                
-                // Stop 1.mp3
-                audio1.pause();
-                audio1.currentTime = 0;
-                
-                // Start 2.mp3 from beginning
-                audio2.currentTime = 0;
-                audio2.muted = false;
-                const playPromise = audio2.play();
-                
-                if (playPromise !== undefined) {
-                    playPromise
-                        .then(() => {
-                            console.log('2.mp3 is now playing');
-                        })
-                        .catch(error => {
-                            console.error('Error playing 2.mp3:', error);
-                        });
-                }
+                switchToAudio2();
             }
         });
-    }, { threshold: 0.15 });
-    foreverObserver.observe(foreverEl);
+    }, { threshold: 0.15 }); // Trigger when 15% of card is visible
+
+    foreverObserver.observe(foreverYoursCard);
+}
+
+// iOS Safari audio fallback - tries to play on any user interaction
+function setupIOSFallback(audioElement) {
+    const tryPlay = () => {
+        audioElement.play()
+            .then(() => {
+                console.log('Audio resumed via iOS fallback');
+                audio2Unlocked = true;
+                // Remove all listeners once successful
+                document.removeEventListener('touchstart', tryPlay);
+                document.removeEventListener('touchend', tryPlay);
+                document.removeEventListener('click', tryPlay);
+            })
+            .catch(e => {
+                console.log('Still waiting for user interaction:', e.message);
+            });
+    };
+
+    // Add multiple event listeners for iOS
+    document.addEventListener('touchstart', tryPlay, { passive: true });
+    document.addEventListener('touchend', tryPlay, { passive: true });
+    document.addEventListener('click', tryPlay, { passive: true });
 }
 
 
